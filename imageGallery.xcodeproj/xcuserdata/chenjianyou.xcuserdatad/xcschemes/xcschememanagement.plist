@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>imageGallery.xcscheme</key>
+		<key>imageGallery.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,6 +12,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>159C8CBD1F4DA41E0010B4BE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>15EF6BE01F46DDDC0094789E</key>
 		<dict>
 			<key>primary</key>

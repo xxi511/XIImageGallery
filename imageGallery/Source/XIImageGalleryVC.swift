@@ -8,13 +8,14 @@
 
 import UIKit
 
-class XIImageGalleryVC: UIPageViewController {
+public class XIImageGalleryVC: UIPageViewController {
     fileprivate var cfg: XIImageGalleryConfigure = XIImageGalleryConfigure()
     fileprivate var sources: [Any]? = nil
     
     fileprivate var topConstraint: NSLayoutConstraint?
     fileprivate let msg = UILabel(frame: CGRect(x: 0, y: 0, width: 120, height: 33))
     fileprivate var funcView = UIView()
+    fileprivate var firstIdx = 0
     fileprivate var vis:[XIImageDisplayVC] = []
     
     // MARK: Initialize
@@ -23,7 +24,7 @@ class XIImageGalleryVC: UIPageViewController {
         self.cfg.direction = navigationOrientation
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("Not Implent")
     }
     
@@ -32,19 +33,21 @@ class XIImageGalleryVC: UIPageViewController {
     /// - Parameters:
     ///   - configure: gallery configure
     ///   - sources: source array, UIImage, String, URL is accept, but I super recommand send UIImage only
-    convenience init(_ configure: XIImageGalleryConfigure, sources: [Any]) {
+    ///   - firstShowIdx: The index of first showed images in sources
+    convenience public init(_ configure: XIImageGalleryConfigure, sources: [Any], firstShowIdx: Int=0) {
         self.init(transitionStyle: .scroll, navigationOrientation: configure.direction, options: nil)
         self.delegate = self
         self.dataSource = self
         self.cfg = configure
         self.sources = sources
+        self.firstIdx = (sources.count > firstShowIdx) ? firstShowIdx: 0
         self.funcViewInit()
         self.msgLabelInit()
     }
     
     
 
-    override func viewDidLoad() {
+    override  public func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = self.cfg.backgroundColor
         let filted = self.sources?.filter{$0 is UIImage || $0 is URL || $0 is String}
@@ -52,22 +55,20 @@ class XIImageGalleryVC: UIPageViewController {
         for item in filted! {
             if let str = item as? String {
                 if let url = URL(string: str) {
-                    let vi = XIImageDisplayVC(url, maxiumZoom: self.cfg.maximumZoomScale, minimumZoom:self.cfg.minimumZoomScale, backgroundColor:self.cfg.backgroundColor)
-                    vis.append(vi)
+                    self.appendVis(source: url)
                 }
             }
             else {
-                let vi = XIImageDisplayVC(item, maxiumZoom: self.cfg.maximumZoomScale, minimumZoom:self.cfg.minimumZoomScale, backgroundColor:self.cfg.backgroundColor)
-                vis.append(vi)
+                self.appendVis(source: item)
             }
         }
-        self.setViewControllers([vis[0]], direction: .forward, animated: false, completion: nil)
+        self.setViewControllers([vis[self.firstIdx]], direction: .forward, animated: false, completion: nil)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.tapView))
         self.view.addGestureRecognizer(tap)
     }
 
-    override func didReceiveMemoryWarning() {
+    override  public func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -76,14 +77,14 @@ class XIImageGalleryVC: UIPageViewController {
 // MARK: pageViewController Delegate
 extension XIImageGalleryVC: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
         let idx = self.vis.index(where: {$0 == viewController})!
         let outVi = (self.cfg.infiniteScroll) ? vis.last: nil
         return (idx > 0) ? vis[idx - 1]: outVi
     }
     
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         
         let idx = self.vis.index(where: {$0 == viewController})!
         let outVi = (self.cfg.infiniteScroll) ? vis.first: nil
@@ -242,5 +243,10 @@ extension XIImageGalleryVC {
     
     func dismissMsgToast() {
         self.msg.removeFromSuperview()
+    }
+    
+    func appendVis(source: Any) {
+        let vi = XIImageDisplayVC(source, maxiumZoom: self.cfg.maximumZoomScale, minimumZoom:self.cfg.minimumZoomScale, backgroundColor:self.cfg.backgroundColor)
+        self.vis.append(vi)
     }
 }

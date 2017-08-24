@@ -24,7 +24,7 @@ class XIImageDisplayVC: UIViewController {
     }
     
     convenience init(_ source: Any, maxiumZoom: CGFloat, minimumZoom: CGFloat, backgroundColor: UIColor) {
-        self.init(nibName: "XIImageDisplayVC", bundle: nil)
+        self.init(nibName: "XIImageDisplayVC", bundle: Bundle(for: XIImageDisplayVC.self))
         
         if let img = source as? UIImage {
             self.imageView.image = img
