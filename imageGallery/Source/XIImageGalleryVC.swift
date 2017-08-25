@@ -40,7 +40,7 @@ public class XIImageGalleryVC: UIPageViewController {
         self.dataSource = self
         self.cfg = configure
         self.sources = sources
-        self.firstIdx = (sources.count > firstShowIdx) ? firstShowIdx: 0
+        self.firstIdx = firstShowIdx
         self.funcViewInit()
         self.msgLabelInit()
     }
@@ -51,7 +51,7 @@ public class XIImageGalleryVC: UIPageViewController {
         super.viewDidLoad()
         self.view.backgroundColor = self.cfg.backgroundColor
         let filted = self.sources?.filter{$0 is UIImage || $0 is URL || $0 is String}
-        
+
         for item in filted! {
             if let str = item as? String {
                 if let url = URL(string: str) {
@@ -62,6 +62,18 @@ public class XIImageGalleryVC: UIPageViewController {
                 self.appendVis(source: item)
             }
         }
+        
+        guard self.vis.count > 0 else {
+            print("XIImageGallery: Verify your image sources")
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
+        
+        if self.vis.count == 1 {
+            self.cfg.infiniteScroll = false
+        }
+        
+        self.firstIdx = (self.vis.count > self.firstIdx) ? self.firstIdx: 0
         self.setViewControllers([vis[self.firstIdx]], direction: .forward, animated: false, completion: nil)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.tapView))

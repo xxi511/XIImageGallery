@@ -28,8 +28,8 @@ class ViewController: UIViewController {
         let str = "https://www.w3schools.com/css/trolltunga.jpg"
         let str2 = "https://stackoverflow.com/questions/23987692/showing-the-file-download-progress-with-nsurlsessiondatatask"
         let cfg = XIImageGalleryConfigure()
-        cfg.direction = .horizontal
-        let vi = XIImageGalleryVC(cfg, sources: [#imageLiteral(resourceName: "dog"), #imageLiteral(resourceName: "icon"), url, str, str2])
+        cfg.infiniteScroll = true
+        let vi = XIImageGalleryVC(cfg, sources: [#imageLiteral(resourceName: "icon"), #imageLiteral(resourceName: "dog"), url, str])
         self.present(vi, animated: true, completion: nil)
     }
 

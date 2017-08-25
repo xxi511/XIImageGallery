@@ -152,6 +152,16 @@ extension XIImageDisplayVC {
         if screen.height >= imgSize.height && screen.width >= imgSize.width {
             size = imgSize
         }
+        else if screen.height >= imgSize.height && imgSize.width > screen.width {
+            let nw = screen.width
+            let nh = nw * imgRatio
+            size = CGSize(width: nw, height: nh)
+        }
+        else if screen.width >= imgSize.width && imgSize.height > screen.height {
+            let nh = screen.height
+            let nw = nh / imgRatio
+            size = CGSize(width: nw, height: nh)
+        }
         else if imgSize.height >= imgSize.width {
             let nh = screen.height
             let nw = nh / imgRatio
